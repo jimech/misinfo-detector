@@ -3,8 +3,8 @@ app/main.py
 ------------
 Streamlit web UI for the Misinformation Detector.
 
-Paste a script -> click Analyze -> see each claim with a color-coded
-verdict, confidence, evidence, and explanation.
+Paste a script -> pick an evidence source -> click Analyze -> see each
+claim with a color-coded verdict, confidence, evidence, and explanation.
 
 Run it with:   streamlit run app/main.py
 """
@@ -31,7 +31,7 @@ from src.schemas import Verdict
 # would reload on every interaction (very slow).
 @st.cache_resource
 def _load_models():
-    """Warm up the retriever/NLI models so the first analysis is fast."""
+    """Warm up the local retriever/NLI models so the first analysis is fast."""
     warm_up()
     return True
 
@@ -110,15 +110,25 @@ def _render_result(result):
 def main():
     st.set_page_config(page_title="Misinformation Detector", page_icon="🔎")
 
-    st.title(" Misinformation Detector")
+    st.title("🔎 Misinformation Detector")
     st.caption(
         "Paste a short-form video script. The system extracts factual claims "
-        "and checks each one against an evidence corpus."
+        "and checks each one against an evidence source."
     )
 
-    # Trigger the one-time model load (shows a spinner the first time).
+    # Trigger the one-time local model load (shows a spinner the first time).
     with st.spinner("Loading models (first time only)..."):
         _load_models()
+
+    # Let the user choose where evidence comes from.
+    source_label = st.radio(
+        "Evidence source",
+        options=["Local corpus (fast, 12 curated facts)", "Wikipedia (live, broad)"],
+        index=0,
+        horizontal=True,
+    )
+    # Map the friendly label to the internal source string.
+    source = "wikipedia" if source_label.startswith("Wikipedia") else "local"
 
     # Text box for the script, pre-filled with the example.
     script = st.text_area(
@@ -133,8 +143,13 @@ def main():
             st.warning("Please paste a script first.")
             return
 
-        with st.spinner("Analyzing claims..."):
-            results = analyze_script(script)
+        spinner_msg = (
+            "Analyzing claims against Wikipedia (this can take a bit)..."
+            if source == "wikipedia"
+            else "Analyzing claims..."
+        )
+        with st.spinner(spinner_msg):
+            results = analyze_script(script, source=source)
 
         if not results:
             st.info(

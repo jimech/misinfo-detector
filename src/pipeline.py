@@ -24,13 +24,14 @@ from src.verifier import verify_claim
 from src.explainer import explain_verdict
 
 
-def analyze_script(text: str, top_k: int = 3) -> List[ClaimResult]:
+def analyze_script(text: str, top_k: int = 3, source: str = "local") -> List[ClaimResult]:
     """
     Run a raw script through the whole pipeline.
 
     Args:
-        text:  the raw video script (one big string).
-        top_k: how many evidence items to retrieve per claim.
+        text:   the raw video script (one big string).
+        top_k:  how many evidence items to retrieve per claim.
+        source: "local" (curated corpus) or "wikipedia" (live).
 
     Returns:
         A list of ClaimResult — one per extracted claim — each with
@@ -46,11 +47,10 @@ def analyze_script(text: str, top_k: int = 3) -> List[ClaimResult]:
 
     # Steps 3-5: for each claim, retrieve -> verify -> explain.
     for claim in claims:
-        evidence = get_evidence_for_claim(claim.text, top_k=top_k)
+        evidence = get_evidence_for_claim(claim.text, top_k=top_k, source=source)
         verdict, confidence, scored_evidence = verify_claim(claim.text, evidence)
         explanation = explain_verdict(claim.text, verdict, confidence, scored_evidence)
 
-        # Bundle everything into the final ClaimResult form.
         results.append(
             ClaimResult(
                 claim=claim.text,
