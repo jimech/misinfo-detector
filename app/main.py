@@ -110,7 +110,7 @@ def _render_result(result):
 def main():
     st.set_page_config(page_title="Misinformation Detector", page_icon="🔎")
 
-    st.title("🔎 Misinformation Detector")
+    st.title(" Misinformation Detector")
     st.caption(
         "Paste a short-form video script. The system extracts factual claims "
         "and checks each one against an evidence corpus."

@@ -1,0 +1,62 @@
+[
+  {
+    "claim": "Drinking lemon water cures cancer.",
+    "expected": "contradicted",
+    "note": "Corpus says no drink cures cancer."
+  },
+  {
+    "claim": "The Eiffel Tower is about 330 meters tall.",
+    "expected": "supported",
+    "note": "Corpus states ~330 meters."
+  },
+  {
+    "claim": "Marie Curie won the Nobel Prize in Literature.",
+    "expected": "contradicted",
+    "note": "Corpus: she won Physics and Chemistry, never Literature."
+  },
+  {
+    "claim": "Adults need around 7 to 9 hours of sleep.",
+    "expected": "supported",
+    "note": "Corpus states 7-9 hours."
+  },
+  {
+    "claim": "Supplements work better than therapy for anxiety.",
+    "expected": "contradicted",
+    "note": "Corpus: supplements are not a proven substitute for therapy."
+  },
+  {
+    "claim": "Human activity is the main cause of recent global warming.",
+    "expected": "supported",
+    "note": "Corpus states human activity is the dominant cause."
+  },
+  {
+    "claim": "Everyone must drink exactly eight glasses of water daily.",
+    "expected": "contradicted",
+    "note": "Corpus: this claim is not strongly supported; needs vary."
+  },
+  {
+    "claim": "Vitamin C prevents the common cold in everyone.",
+    "expected": "contradicted",
+    "note": "Corpus: does not prevent colds in the general population."
+  },
+  {
+    "claim": "Eating one carrot makes you invisible.",
+    "expected": "not_enough_evidence",
+    "note": "No relevant evidence exists in the corpus."
+  },
+  {
+    "claim": "The Eiffel Tower was painted blue in 1950.",
+    "expected": "not_enough_evidence",
+    "note": "Corpus has Eiffel facts but nothing about being painted blue."
+  },
+  {
+    "claim": "Bananas contain a hidden metal that powers phones.",
+    "expected": "not_enough_evidence",
+    "note": "No relevant evidence in the corpus."
+  },
+  {
+    "claim": "Investments can guarantee high returns with no risk.",
+    "expected": "contradicted",
+    "note": "Corpus: no investment guarantees returns; all carry risk."
+  }
+]
