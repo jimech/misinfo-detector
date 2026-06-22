@@ -1,0 +1,8 @@
+# Installed step by step as we reach each ticket — don't install all yet.
+pydantic                # define and validate our data shapes
+spacy                   # sentence splitting and language tools
+sentence-transformers   # turn text into vectors for retrieval
+numpy                   # math for similarity
+transformers            # pre-trained model for supports/contradicts
+torch                   # runs the models (uses your GPU if available)
+streamlit               # the web UI
