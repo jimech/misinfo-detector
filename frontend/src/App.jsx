@@ -38,19 +38,19 @@ function App() {
   }
 
   return (
-    <div
+   <div
       style={{
-        fontFamily: "system-ui, sans-serif",
         maxWidth: "760px",
         margin: "0 auto",
-        padding: "2rem 1.5rem",
-        color: "#111",
+        padding: "2.5rem 1.5rem",
       }}
     >
-      <h1 style={{ marginBottom: "0.2rem" }}>🔎 Misinformation Detector</h1>
-      <p style={{ color: "#666", marginTop: 0 }}>
-        Paste a short-form video script. Each factual claim is checked against evidence.
-      </p>
+      <header style={{ marginBottom: "1.5rem" }}>
+        <h1 style={{ margin: 0, fontSize: "1.9rem" }}>🔎 Misinformation Detector</h1>
+        <p style={{ color: "#667085", marginTop: "0.4rem", marginBottom: 0 }}>
+          Paste a short-form video script. Each factual claim is checked against evidence.
+        </p>
+      </header>
 
       {/* Script input */}
       <textarea

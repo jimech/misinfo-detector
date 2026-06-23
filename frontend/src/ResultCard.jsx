@@ -8,14 +8,14 @@ const VERDICT_STYLES = {
     color: "#1a7f37",
     bg: "#e6f4ea",
     border: "#1a7f37",
-    emoji: "✅",
+    emoji: "",
     label: "SUPPORTED",
   },
   contradicted: {
     color: "#b42318",
     bg: "#fdecea",
     border: "#b42318",
-    emoji: "⚠️",
+    emoji: "",
     label: "CONTRADICTED",
   },
   not_enough_evidence: {
@@ -34,6 +34,7 @@ function ResultCard({ result }) {
 
   return (
     <div
+      className="card-shadow"
       style={{
         borderLeft: `6px solid ${style.border}`,
         background: style.bg,
