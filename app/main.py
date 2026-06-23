@@ -20,11 +20,42 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 import streamlit as st
-from src.pipeline import analyze_script
+import requests
 from src.retrieval_service import warm_up
-from src.schemas import Verdict
+from src.schemas import Verdict, ClaimResult
 from src.transcriber import transcribe_uploaded
 
+
+# The address where the FastAPI backend is running.
+API_URL = "http://localhost:8000"
+
+
+def call_analyze_api(text: str, source: str, verifier: str = "nli"):
+    """
+    Call the FastAPI /analyze endpoint over HTTP and return a list of
+    ClaimResult objects rebuilt from the JSON response.
+
+    This is what a frontend does: send a request, get JSON, display it.
+    Raises a clear error if the API isn't reachable.
+    """
+    try:
+        response = requests.post(
+            f"{API_URL}/analyze",
+            json={"text": text, "source": source, "verifier": verifier},
+            timeout=120,  # web/LLM modes can be slow
+        )
+        response.raise_for_status()
+    except requests.exceptions.ConnectionError:
+        raise RuntimeError(
+            "Could not reach the API. Make sure the backend is running:\n"
+            "    uvicorn api.main:app --reload"
+        )
+
+    data = response.json()
+    # Rebuild ClaimResult objects from the JSON so the rest of the
+    # display code works unchanged.
+    results = [ClaimResult(**item) for item in data["results"]]
+    return results
 
 # --- Load models ONCE ------------------------------------------------
 # @st.cache_resource tells Streamlit: run this function a single time,
@@ -324,7 +355,11 @@ def main():
             spinner_msg = "Analyzing claims..."
 
         with st.spinner(spinner_msg):
-            results = analyze_script(script, source=source)
+            try:
+                results = call_analyze_api(script, source=source)
+            except RuntimeError as e:
+                st.error(str(e))
+                return
 
         if not results:
             st.info(
