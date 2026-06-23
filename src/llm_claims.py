@@ -76,7 +76,7 @@ def _guess_category(claim_text: str) -> Category:
     return Category.other
 
 
-def _extract_claims_rules(sentences: list[str]) -> list[Claim]:
+def extract_claims_llm(text: str) -> List[Claim]:
     """
     Extract atomic factual claims from text using the local LLM.
     Falls back to an empty list if the model output can't be parsed.
@@ -104,28 +104,3 @@ def _extract_claims_rules(sentences: list[str]) -> list[Claim]:
             claims.append(Claim(text=ct, category=_guess_category(ct)))
 
     return claims
-
-def extract_claims(sentences: list[str], method: str = "llm") -> list[Claim]:
-    """
-    PUBLIC entry point. Extract atomic factual claims.
-
-    Args:
-        sentences: list of sentences from the preprocessor.
-        method:    "llm" (local Ollama, best for run-on/transcripts)
-                   or "rules" (fast, offline, no model needed).
-
-    The LLM method joins the sentences back into text, since the LLM
-    handles splitting itself and works better on the full passage.
-    """
-    if method == "llm":
-        from src.llm_claims import extract_claims_llm
-        # The LLM works on the whole text at once, not pre-split sentences.
-        full_text = " ".join(sentences)
-        claims = extract_claims_llm(full_text)
-        # If the LLM failed (e.g. Ollama not running), fall back to rules.
-        if claims:
-            return claims
-        print("   [info] LLM returned no claims; falling back to rule-based.")
-        return _extract_claims_rules(sentences)
-
-    return _extract_claims_rules(sentences)
