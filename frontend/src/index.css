@@ -1,10 +1,9 @@
-/* index.css — clean base theme */
+/* index.css — glassmorphism theme */
 
 :root {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   line-height: 1.6;
   color: #1a1a2e;
-  background-color: #f7f8fa;
 }
 
 * {
@@ -14,21 +13,33 @@
 body {
   margin: 0;
   min-height: 100vh;
+  /* Soft gradient backdrop — gives the glass something to blur over */
+  background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 40%, #fce7f3 100%);
+  background-attachment: fixed;
 }
 
 h1, h2, h3 {
   line-height: 1.2;
 }
 
-button {
+button, textarea, select, input {
   font-family: inherit;
 }
 
-textarea, select {
-  font-family: inherit;
+/* The frosted-glass panel effect */
+.glass {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px); /* Safari support */
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.12);
 }
 
-/* Smooth, subtle card shadow used by result cards */
-.card-shadow {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+/* A lighter glass for cards sitting on the main glass panel */
+.glass-card {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 16px rgba(31, 38, 135, 0.08);
 }
