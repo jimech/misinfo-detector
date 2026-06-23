@@ -123,12 +123,20 @@ def main():
     # Let the user choose where evidence comes from.
     source_label = st.radio(
         "Evidence source",
-        options=["Local corpus (fast, 12 curated facts)", "Wikipedia (live, broad)"],
+        options=["Local corpus (fast, 12 curated facts)", 
+                 "Wikipedia (live, broad)",
+                 "Web (live, broadest, most current)",
+        ],
         index=0,
         horizontal=True,
     )
     # Map the friendly label to the internal source string.
-    source = "wikipedia" if source_label.startswith("Wikipedia") else "local"
+    if source_label.startswith("Wikipedia"):
+        source = "wikipedia"
+    elif source_label.startswith("Web"):
+        source = "web"
+    else:
+        source = "local"
 
     # Text box for the script, pre-filled with the example.
     script = st.text_area(
@@ -143,11 +151,13 @@ def main():
             st.warning("Please paste a script first.")
             return
 
-        spinner_msg = (
-            "Analyzing claims against Wikipedia (this can take a bit)..."
-            if source == "wikipedia"
-            else "Analyzing claims..."
-        )
+        if source == "wikipedia":
+            spinner_msg = "Analyzing claims against Wikipedia (this can take a bit)..."
+        elif source == "web":
+            spinner_msg = "Searching the web for evidence (this can take a bit)..."
+        else:
+            spinner_msg = "Analyzing claims..."
+
         with st.spinner(spinner_msg):
             results = analyze_script(script, source=source)
 
