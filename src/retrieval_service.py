@@ -1,23 +1,23 @@
 """
 retrieval_service.py
 ---------------------
-Stable layer over evidence retrieval. Now supports TWO sources:
+Stable layer over evidence retrieval. Supports THREE sources:
 
-  - "local"     : the curated 12-fact corpus (fast, offline, used by
-                  the test set so evaluation stays reproducible).
-  - "wikipedia" : live Wikipedia retrieval (works on almost any claim).
+  - "local"     : curated 12-fact corpus (fast, offline, reproducible).
+  - "wikipedia" : live Wikipedia retrieval (broad, factual).
+  - "web"       : live Tavily web search (broadest, most current).
 
-The rest of the pipeline still calls ONE function,
-get_evidence_for_claim(), and just passes which source to use.
+The rest of the pipeline calls ONE function, get_evidence_for_claim(),
+and just passes which source to use.
 """
 
 from typing import Optional, List
 from src.corpus import load_evidence
 from src.retriever import EvidenceRetriever
 from src.wiki_retriever import search_wikipedia
+from src.web_retriever import search_web
 from src.schemas import Evidence
 
-# Cache for the static (local) retriever.
 _retriever: Optional[EvidenceRetriever] = None
 
 
@@ -41,10 +41,12 @@ def get_evidence_for_claim(
     Args:
         claim_text: the claim to find evidence for.
         top_k:      how many evidence items to return.
-        source:     "local" (curated corpus) or "wikipedia" (live).
+        source:     "local", "wikipedia", or "web".
     """
     if source == "wikipedia":
         return search_wikipedia(claim_text, top_k=top_k)
+    if source == "web":
+        return search_web(claim_text, top_k=top_k)
 
     # Default: local curated corpus.
     retriever = _get_local_retriever()
@@ -54,7 +56,8 @@ def get_evidence_for_claim(
 def warm_up(source: str = "local") -> None:
     """Pre-load models so the first real query isn't slow."""
     if source == "wikipedia":
-        # Trigger the embedding model load via a tiny throwaway query.
         search_wikipedia("test", top_k=1)
+    elif source == "web":
+        search_web("test", top_k=1)
     else:
         _get_local_retriever()
