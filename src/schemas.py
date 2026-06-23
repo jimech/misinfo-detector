@@ -53,3 +53,4 @@ class ClaimResult(BaseModel):
     confidence: float = 0.0                          # 0.0 to 1.0
     evidence: list[Evidence] = Field(default_factory=list)  # supporting evidence
     explanation: str = ""                            # plain-English reasoning
+    safer_rewrite: str = ""                          # corrected version (if flagged)

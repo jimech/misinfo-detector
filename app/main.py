@@ -96,6 +96,136 @@ def _render_result(result):
     )
 
     # Explanation + evidence tucked into an expander to keep it tidy.
+    # Show a safer rewrite prominently if the claim was flagged.
+    if result.safer_rewrite:
+        st.markdown(
+            f"""
+            <div style="
+                border-left: 4px solid #1a7f37;
+                background: #e6f4ea;
+                padding: 8px 14px;
+                border-radius: 6px;
+                margin: 4px 0 8px 0;">
+                <span style="font-size: 0.78em; color: #1a7f37; font-weight: 700;">
+                    ✏️ SUGGESTED SAFER VERSION
+                </span>
+                <div style="font-size: 0.98em; margin-top: 3px; color: #111;">
+                    {result.safer_rewrite}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    # Explanation + evidence tucked into an expander to keep it tidy.
+    # Show a safer rewrite prominently if the claim was flagged.
+    if result.safer_rewrite:
+        st.markdown(
+            f"""
+            <div style="
+                border-left: 4px solid #1a7f37;
+                background: #e6f4ea;
+                padding: 8px 14px;
+                border-radius: 6px;
+                margin: 4px 0 8px 0;">
+                <span style="font-size: 0.78em; color: #1a7f37; font-weight: 700;">
+                    ✏️ SUGGESTED SAFER VERSION
+                </span>
+                <div style="font-size: 0.98em; margin-top: 3px; color: #111;">
+                    {result.safer_rewrite}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    # Explanation + evidence tucked into an expander to keep it tidy.
+   # Show a safer rewrite prominently if the claim was flagged.
+    if result.safer_rewrite:
+        st.markdown(
+            f"""
+            <div style="
+                border-left: 4px solid #1a7f37;
+                background: #e6f4ea;
+                padding: 8px 14px;
+                border-radius: 6px;
+                margin: 4px 0 8px 0;">
+                <span style="font-size: 0.78em; color: #1a7f37; font-weight: 700;">
+                    ✏️ SUGGESTED SAFER VERSION
+                </span>
+                <div style="font-size: 0.98em; margin-top: 3px; color: #111;">
+                    {result.safer_rewrite}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    # Explanation + evidence tucked into an expander to keep it tidy.
+    # Show a safer rewrite prominently if the claim was flagged.
+    if result.safer_rewrite:
+        st.markdown(
+            f"""
+            <div style="
+                border-left: 4px solid #1a7f37;
+                background: #e6f4ea;
+                padding: 8px 14px;
+                border-radius: 6px;
+                margin: 4px 0 8px 0;">
+                <span style="font-size: 0.78em; color: #1a7f37; font-weight: 700;">
+                    ✏️ SUGGESTED SAFER VERSION
+                </span>
+                <div style="font-size: 0.98em; margin-top: 3px; color: #111;">
+                    {result.safer_rewrite}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+# Show a safer rewrite prominently if the claim was flagged.
+    if result.safer_rewrite:
+        st.markdown(
+            f"""
+            <div style="
+                border-left: 4px solid #1a7f37;
+                background: #e6f4ea;
+                padding: 8px 14px;
+                border-radius: 6px;
+                margin: 4px 0 8px 0;">
+                <span style="font-size: 0.78em; color: #1a7f37; font-weight: 700;">
+                    ✏️ SUGGESTED SAFER VERSION
+                </span>
+                <div style="font-size: 0.98em; margin-top: 3px; color: #111;">
+                    {result.safer_rewrite}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+  # Show a safer rewrite prominently if the claim was flagged.
+    if result.safer_rewrite:
+        st.markdown(
+            f"""
+            <div style="
+                border-left: 4px solid #1a7f37;
+                background: #e6f4ea;
+                padding: 8px 14px;
+                border-radius: 6px;
+                margin: 4px 0 8px 0;">
+                <span style="font-size: 0.78em; color: #1a7f37; font-weight: 700;">
+                    ✏️ SUGGESTED SAFER VERSION
+                </span>
+                <div style="font-size: 0.98em; margin-top: 3px; color: #111;">
+                    {result.safer_rewrite}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    # Explanation + evidence tucked into an expander to keep it tidy.
     with st.expander("See explanation and evidence"):
         st.write(f"**Explanation:** {result.explanation}")
         st.write("**Evidence considered:**")
@@ -105,7 +235,6 @@ def _render_result(result):
                 f"- *({tag}, relevance {e.score:.2f})* "
                 f"**{e.source_title}** — {e.text}"
             )
-
 
 # --- Page layout -----------------------------------------------------
 def main():

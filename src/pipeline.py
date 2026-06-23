@@ -16,7 +16,7 @@ needs to know how the steps work inside.
 """
 
 from typing import List
-from src.schemas import ClaimResult
+from src.schemas import ClaimResult, Verdict
 from src.preprocess import split_into_sentences
 from src.claims import extract_claims
 from src.retrieval_service import get_evidence_for_claim, warm_up
@@ -25,6 +25,7 @@ from src.explainer import explain_verdict
 from src.verifier import verify_claim
 from src.verifier import verify_claim
 from src.llm_verifier import verify_claim_llm
+from src.rewriter import suggest_safer_rewrite
 
 
 def analyze_script(
@@ -62,6 +63,13 @@ def analyze_script(
         verdict, confidence, scored_evidence = verify_fn(claim.text, evidence)
         explanation = explain_verdict(claim.text, verdict, confidence, scored_evidence)
 
+        # Only flagged (contradicted) claims get a safer rewrite.
+        rewrite = ""
+        if verdict == Verdict.contradicted:
+            rewrite = suggest_safer_rewrite(claim.text, scored_evidence)
+
+        
+
         results.append(
             ClaimResult(
                 claim=claim.text,
@@ -70,6 +78,7 @@ def analyze_script(
                 confidence=confidence,
                 evidence=scored_evidence,
                 explanation=explanation,
+                safer_rewrite=rewrite,
             )
         )
 
