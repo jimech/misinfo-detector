@@ -11,6 +11,8 @@ const EXAMPLE_SCRIPT =
 
 function App() {
   const [page, setPage] = useState("home"); // "home" or "tech"
+  const [inputMode, setInputMode] = useState("paste"); // "paste" or "upload"
+  const [transcribing, setTranscribing] = useState(false);
   const [script, setScript] = useState(EXAMPLE_SCRIPT);
   const [source, setSource] = useState("local");
   const [results, setResults] = useState(null);
@@ -35,6 +37,29 @@ function App() {
       setError(`${err.message}. Is the API running?`);
     } finally {
       setLoading(false);
+    }
+  }
+
+  // Upload a file to /transcribe and put the result in the script box.
+  async function transcribeFile(file) {
+    setTranscribing(true);
+    setError("");
+    try {
+      // FormData is how you send files in a browser HTTP request.
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch(`${API_URL}/transcribe`, {
+        method: "POST",
+        body: formData, // no Content-Type header — the browser sets it
+      });
+      if (!response.ok) throw new Error(`Transcription failed (status ${response.status})`);
+      const data = await response.json();
+      setScript(data.transcript); // drop the transcript into the editable box
+    } catch (err) {
+      setError(`${err.message}. Is the API running?`);
+    } finally {
+      setTranscribing(false);
     }
   }
 
@@ -90,11 +115,50 @@ function App() {
           <header style={{ marginBottom: "1.5rem" }}>
             <h1 style={{ margin: 0, fontSize: "1.9rem" }}>🔎 Misinformation Detector</h1>
             <p style={{ color: "#667085", marginTop: "0.4rem", marginBottom: 0 }}>
-              Paste a short-form video script. Each factual claim is checked against evidence.
+              Paste a script or upload a video. Each factual claim is checked against evidence.
             </p>
           </header>
 
-          {/* Script input */}
+          {/* Input method toggle */}
+          <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
+            <label style={{ fontSize: "0.9rem", cursor: "pointer" }}>
+              <input
+                type="radio"
+                checked={inputMode === "paste"}
+                onChange={() => setInputMode("paste")}
+              />{" "}
+              Paste a script
+            </label>
+            <label style={{ fontSize: "0.9rem", cursor: "pointer" }}>
+              <input
+                type="radio"
+                checked={inputMode === "upload"}
+                onChange={() => setInputMode("upload")}
+              />{" "}
+              Upload audio/video
+            </label>
+          </div>
+
+          {/* File picker (only in upload mode) */}
+          {inputMode === "upload" && (
+            <div style={{ marginBottom: "1rem" }}>
+              <input
+                type="file"
+                accept=".mp3,.m4a,.wav,.mp4,.mov,.webm,.ogg"
+                onChange={(e) => {
+                  if (e.target.files[0]) transcribeFile(e.target.files[0]);
+                }}
+                disabled={transcribing}
+              />
+              {transcribing && (
+                <span style={{ marginLeft: "0.5rem", color: "#667085", fontSize: "0.9rem" }}>
+                  Transcribing… (can take a bit)
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Script input (editable; holds pasted text or the transcript) */}
           <textarea
             value={script}
             onChange={(e) => setScript(e.target.value)}

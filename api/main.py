@@ -19,12 +19,13 @@ from typing import List
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from src.pipeline import analyze_script
 from src.schemas import ClaimResult
+from src.transcriber import transcribe_uploaded
 
 # Create the FastAPI application.
 app = FastAPI(
@@ -90,3 +91,24 @@ def analyze(request: AnalyzeRequest):
         flagged_count=flagged,
         results=results,
     )
+    
+# Response shape for transcription.
+class TranscribeResponse(BaseModel):
+    transcript: str
+
+
+@app.post("/transcribe", response_model=TranscribeResponse)
+async def transcribe(file: UploadFile = File(...)):
+    """
+    Accept an uploaded audio/video file, transcribe it with Whisper,
+    and return the transcript text.
+
+    The transcript can then be sent to /analyze for fact-checking.
+    """
+    # Read the uploaded file's bytes.
+    file_bytes = await file.read()
+
+    # Reuse the existing transcriber (writes to a temp file, runs Whisper).
+    transcript = transcribe_uploaded(file_bytes, file.filename)
+
+    return TranscribeResponse(transcript=transcript)
