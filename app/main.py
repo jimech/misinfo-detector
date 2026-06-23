@@ -23,6 +23,7 @@ import streamlit as st
 from src.pipeline import analyze_script
 from src.retrieval_service import warm_up
 from src.schemas import Verdict
+from src.transcriber import transcribe_uploaded
 
 
 # --- Load models ONCE ------------------------------------------------
@@ -139,11 +140,46 @@ def main():
         source = "local"
 
     # Text box for the script, pre-filled with the example.
-    script = st.text_area(
-        "Video script",
-        value=_EXAMPLE_SCRIPT,
-        height=180,
+    # Let the user choose how to provide the script.
+    input_mode = st.radio(
+        "Input method",
+        options=["Paste a script", "Upload audio/video file"],
+        index=0,
+        horizontal=True,
     )
+
+    script = ""  # will hold the text to analyze
+
+    if input_mode == "Paste a script":
+        script = st.text_area(
+            "Video script",
+            value=_EXAMPLE_SCRIPT,
+            height=180,
+        )
+    else:
+        # File uploader for audio/video.
+        uploaded = st.file_uploader(
+            "Upload an audio or video file",
+            type=["mp3", "m4a", "wav", "mp4", "mov", "webm", "ogg"],
+        )
+        if uploaded is not None:
+            st.caption(f"Uploaded: {uploaded.name}")
+            # Transcribe button so it doesn't run on every rerun.
+            if st.button("Transcribe file", type="secondary"):
+                with st.spinner("Transcribing (this can take a bit on CPU)..."):
+                    transcript = transcribe_uploaded(
+                        uploaded.getvalue(), uploaded.name
+                    )
+                # Stash the transcript in session so it survives reruns.
+                st.session_state["transcript"] = transcript
+
+            # If we have a transcript, show it (editable) and use it.
+            if "transcript" in st.session_state:
+                script = st.text_area(
+                    "Transcript (you can edit before analyzing)",
+                    value=st.session_state["transcript"],
+                    height=150,
+                )
 
     # The analyze button.
     if st.button("Analyze script", type="primary"):

@@ -69,3 +69,38 @@ def transcribe_file(path: str) -> str:
     transcript = " ".join(p for p in pieces if p)
 
     return transcript.strip()
+
+def transcribe_uploaded(file_bytes: bytes, filename: str) -> str:
+    """
+    Transcribe an uploaded file given its raw bytes.
+
+    Streamlit provides uploads as in-memory bytes, but Whisper needs
+    a real file path. We write the bytes to a temporary file, transcribe
+    it, then delete the temp file.
+
+    Args:
+        file_bytes: the raw bytes of the uploaded file.
+        filename:   original name (used to keep the right extension).
+
+    Returns:
+        The transcript text.
+    """
+    import tempfile
+    import os
+
+    # Keep the original extension so ffmpeg knows the format.
+    suffix = os.path.splitext(filename)[1] or ".tmp"
+
+    # Write bytes to a temporary file.
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        tmp.write(file_bytes)
+        tmp_path = tmp.name
+
+    try:
+        transcript = transcribe_file(tmp_path)
+    finally:
+        # Always clean up the temp file, even if transcription errors.
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+
+    return transcript
