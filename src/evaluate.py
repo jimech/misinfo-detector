@@ -5,9 +5,14 @@ Runs the labeled test set through the pipeline and reports metrics:
   - overall accuracy
   - accuracy per verdict type
   - a confusion matrix (what gets confused for what)
+  - failure analysis (the specific mistakes)
 
-This is kept (not a throwaway test) so you can re-run evaluation
-anytime, e.g. after changing the corpus or tuning thresholds.
+Kept (not a throwaway test) so you can re-run evaluation anytime,
+e.g. after changing the corpus, tuning thresholds, or switching
+the verifier.
+
+You can evaluate EITHER verifier by changing the VERIFIER setting
+below: "nli" (fast NLI model) or "llm" (local Ollama judge).
 
 Run with:   python -m src.evaluate
 """
@@ -17,8 +22,18 @@ from pathlib import Path
 from collections import defaultdict
 
 from src.verifier import verify_claim
+from src.llm_verifier import verify_claim_llm
 from src.retrieval_service import get_evidence_for_claim
 from src.schemas import Verdict
+
+# Which verifier to evaluate: "nli" or "llm".
+# Change this and re-run to compare the two methods.
+VERIFIER = "llm"
+
+# Which evidence source to evaluate against. The test set's expected
+# verdicts were written for the local curated corpus, so keep "local"
+# for a fair, reproducible comparison.
+SOURCE = "local"
 
 _TESTSET_PATH = Path(__file__).resolve().parent.parent / "data" / "testset.json"
 
@@ -37,6 +52,9 @@ def evaluate():
     total = len(testset)
     correct = 0
 
+    # Pick the verification function based on the setting above.
+    verify_fn = verify_claim_llm if VERIFIER == "llm" else verify_claim
+
     # Count correct/total per expected verdict.
     per_verdict_total = defaultdict(int)
     per_verdict_correct = defaultdict(int)
@@ -47,15 +65,15 @@ def evaluate():
     # Store wrong cases to print as failure analysis.
     mistakes = []
 
-    print(f"Evaluating {total} claims...\n")
+    print(f"Evaluating {total} claims using verifier='{VERIFIER}', source='{SOURCE}'...\n")
 
     for row in testset:
         claim = row["claim"]
         expected = row["expected"]
 
         # Run the claim through retrieve -> verify.
-        evidence = get_evidence_for_claim(claim, top_k=3)
-        verdict, confidence, _ = verify_claim(claim, evidence)
+        evidence = get_evidence_for_claim(claim, top_k=3, source=SOURCE)
+        verdict, confidence, _ = verify_fn(claim, evidence)
         predicted = verdict.value
 
         # Tally.
@@ -71,6 +89,7 @@ def evaluate():
     # --- Overall accuracy --------------------------------------------
     accuracy = correct / total if total else 0.0
     print("=" * 60)
+    print(f"VERIFIER: {VERIFIER}   |   SOURCE: {SOURCE}")
     print(f"OVERALL ACCURACY: {correct}/{total} = {accuracy:.0%}")
     print("=" * 60)
 
