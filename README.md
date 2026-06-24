@@ -1,4 +1,4 @@
-# 🔎 Misinformation Detector for Short-Form Video Scripts
+#  Misinformation Detector for Short-Form Video Scripts
  
 An AI system that fact-checks the claims in short-form video content. Paste a script — or upload a video — and it extracts each factual claim, checks it against real evidence (live web, Wikipedia, or a curated corpus), labels it **supported / contradicted / not enough evidence**, explains the verdict, and suggests an accurate rewrite for anything false.
  
@@ -6,7 +6,7 @@ Built as a full-stack project: a Python ML pipeline, a FastAPI backend, and a Re
  
 ---
  
-## 🎬 Demo
+##  Demo
 
 
 
@@ -34,12 +34,12 @@ Give it a script or a video, and for **each factual claim** it:
 5. **Rewrites** contradicted claims into accurate versions.
 ## Features
  
-- 📝 **Two input modes** — paste a script, or upload an audio/video file (transcribed automatically).
-- 🌐 **Three evidence sources** — live web search (Tavily), live Wikipedia, or a curated local corpus.
-- ⚖️ **Two verification methods** — a fast NLI model, or an LLM-as-judge (with a documented comparison of the two; see *Evaluation*).
-- 🎙️ **Speech-to-text** — videos are transcribed with Whisper before analysis.
-- ✏️ **Safer rewrites** — false claims get an accurate, suggested replacement.
-- 🎨 **Polished web UI** — a React frontend with a live detector page and a technical-details page.
+-  **Two input modes** — paste a script, or upload an audio/video file (transcribed automatically).
+-  **Three evidence sources** — live web search (Tavily), live Wikipedia, or a curated local corpus.
+-  **Two verification methods** — a fast NLI model, or an LLM-as-judge (with a documented comparison of the two; see *Evaluation*).
+-  **Speech-to-text** — videos are transcribed with Whisper before analysis.
+-  **Safer rewrites** — false claims get an accurate, suggested replacement.
+-  **Polished web UI** — a React frontend with a live detector page and a technical-details page.
 ## How It Works
  
 The analysis runs as a pipeline. Each claim flows through these stages:
