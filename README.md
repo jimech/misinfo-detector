@@ -1,6 +1,6 @@
 #  Misinformation Detector for Short-Form Video Scripts
  
-An AI system that fact-checks the claims in short-form video content. Paste a script — or upload a video — and it extracts each factual claim, checks it against real evidence (live web, Wikipedia, or a curated corpus), labels it **supported / contradicted / not enough evidence**, explains the verdict, and suggests an accurate rewrite for anything false.
+An AI system that fact-checks the claims in short-form video content. Paste a script  or upload a video  and it extracts each factual claim, checks it against real evidence (live web, Wikipedia, or a curated corpus), labels it **supported / contradicted / not enough evidence**, explains the verdict, and suggests an accurate rewrite for anything false.
  
 Built as a full-stack project: a Python ML pipeline, a FastAPI backend, and a React frontend.
  
